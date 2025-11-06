@@ -5,125 +5,390 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Sistem Ujian CPNS')</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Animate.css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        
         * {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        @keyframes slideInRight {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
+        body::before {
+            content: '';
+            position: fixed;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px),
+                radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+            animation: backgroundMove 20s linear infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes backgroundMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
         }
 
-        @keyframes gradient {
+        /* Gradient Animations */
+        .gradient-bg {
+            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        .animate-fadeIn {
-            animation: fadeIn 0.6s ease-out;
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            transition: all 0.3s ease;
         }
 
-        .animate-slideInRight {
-            animation: slideInRight 0.5s ease-out;
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.2);
         }
 
-        .animate-pulse-slow {
+        /* Navbar Styles */
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.5rem;
+        }
+
+        /* Button Styles */
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-gradient:hover::before {
+            left: 100%;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Card Hover Effects */
+        .hover-lift {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-15px) scale(1.02);
+        }
+
+        /* Icon Animations */
+        .icon-bounce {
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .icon-rotate {
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Pulse Effect */
+        .pulse {
             animation: pulse 2s ease-in-out infinite;
         }
 
-        .gradient-bg {
-            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
         }
 
-        .card-hover {
+        /* Floating Effect */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Progress Bar Animation */
+        .progress-animated .progress-bar {
+            animation: progressAnimation 1.5s ease-in-out;
+        }
+
+        @keyframes progressAnimation {
+            from { width: 0%; }
+        }
+
+        /* Badge Styles */
+        .badge-custom {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* Stat Card */
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 50%;
+            transform: translate(50%, -50%);
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transition: all 0.3s ease;
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .glassmorphism {
-            background: rgba(255, 255, 255, 0.1);
+        /* Footer */
+        .footer-custom {
+            background: rgba(26, 32, 44, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        /* Spinner */
+        .spinner-custom {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar Custom */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        /* Dropdown Animation */
+        .dropdown-menu {
+            animation: slideDown 0.3s ease;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Alert Custom */
+        .alert-custom {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            animation: slideInRight 0.5s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Form Control */
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .form-control, .form-select {
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:hover, .form-select:hover {
+            border-color: #667eea;
+        }
+
+        /* Table Styles */
+        .table-custom {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-custom thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .table-custom tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .table-custom tbody tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+            transform: scale(1.01);
         }
     </style>
     @stack('styles')
 </head>
-<body class="bg-gray-50">
+<body>
     @auth
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-graduation-cap text-white text-xl"></i>
-                        </div>
-                        <span class="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
-                            CPNS Exam
-                        </span>
-                    </a>
+    <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{{ route('dashboard') }}">
+                <div class="me-2 d-flex align-items-center justify-content-center bg-gradient text-white rounded-circle" style="width: 45px; height: 45px;">
+                    <i class="fas fa-graduation-cap fs-4"></i>
                 </div>
-                
-                <div class="flex items-center space-x-4">
-                    <a href="{{ route('dashboard') }}" class="text-gray-700 hover:text-purple-600 px-3 py-2 rounded-md text-sm font-medium transition">
-                        <i class="fas fa-home mr-2"></i>Dashboard
-                    </a>
+                <span class="animate__animated animate__fadeIn">CPNS Exam</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item mx-2">
+                        <a class="nav-link" href="{{ route('dashboard') }}">
+                            <i class="fas fa-home me-2"></i>Dashboard
+                        </a>
+                    </li>
                     
-                    <div class="relative group">
-                        <button class="flex items-center space-x-2 text-gray-700 hover:text-purple-600 transition">
+                    <li class="nav-item dropdown mx-2">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=667eea&color=fff" 
-                                 class="w-8 h-8 rounded-full">
-                            <span class="text-sm font-medium">{{ auth()->user()->name }}</span>
-                            <i class="fas fa-chevron-down text-xs"></i>
-                        </button>
-                        
-                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                            <div class="py-1">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 transition">
-                                    <i class="fas fa-user mr-2"></i>Profile
+                                 class="rounded-circle me-2" width="35" height="35" alt="Avatar">
+                            <span>{{ auth()->user()->name }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-user me-2"></i>Profile
                                 </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
-                                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
                                     </button>
                                 </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
@@ -133,76 +398,56 @@
         @yield('content')
     </main>
 
-    <footer class="bg-gray-900 text-white mt-20">
-        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="glassmorphism rounded-3xl p-12 animate-fadeIn">
-            <div class="mb-8">
-                <div class="inline-block w-20 h-20 bg-white rounded-full flex items-center justify-center mb-6 animate-pulse-slow">
-                    <i class="fas fa-graduation-cap text-5xl bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent"></i>
+    <footer class="footer-custom mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3 d-flex align-items-center justify-content-center bg-gradient text-white rounded-circle" style="width: 50px; height: 50px;">
+                            <i class="fas fa-graduation-cap fs-4"></i>
+                        </div>
+                        <h4 class="mb-0">CPNS Exam</h4>
+                    </div>
+                    <p class="text-white-50">Platform ujian CPNS online terpercaya untuk membantu Anda meraih impian menjadi Aparatur Sipil Negara.</p>
                 </div>
-                <h1 class="text-5xl md:text-6xl font-extrabold text-white mb-4">
-                    Sistem Ujian CPNS
-                </h1>
-                <p class="text-xl text-white/90 mb-8">
-                    Platform ujian online yang modern, aman, dan terpercaya untuk persiapan CPNS Anda
-                </p>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="mb-3">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-link"><i class="fas fa-chevron-right me-2"></i>Tentang Kami</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-link"><i class="fas fa-chevron-right me-2"></i>Panduan</a></li>
+                        <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none hover-link"><i class="fas fa-chevron-right me-2"></i>FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="mb-3">Kontak</h5>
+                    <ul class="list-unstyled text-white-50">
+                        <li class="mb-2"><i class="fas fa-envelope me-2"></i>info@cpnsexam.id</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2"></i>+62 821 xxxx xxxx</li>
+                    </ul>
+                </div>
             </div>
-
-            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                <a href="{{ route('login') }}" class="btn-primary text-white px-8 py-4 rounded-xl font-semibold text-lg inline-flex items-center justify-center space-x-2">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Login</span>
-                </a>
-                <a href="{{ route('register') }}" class="bg-white text-purple-600 px-8 py-4 rounded-xl font-semibold text-lg inline-flex items-center justify-center space-x-2 hover:shadow-xl transition-all hover:-translate-y-1">
-                    <i class="fas fa-user-plus"></i>
-                    <span>Daftar Sekarang</span>
-                </a>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-                <div class="bg-white/20 backdrop-blur-sm rounded-xl p-6 text-white">
-                    <div class="text-4xl mb-3">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Ujian Real-time</h3>
-                    <p class="text-sm text-white/80">Timer otomatis dan sistem yang akurat</p>
-                </div>
-                <div class="bg-white/20 backdrop-blur-sm rounded-xl p-6 text-white">
-                    <div class="text-4xl mb-3">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Penilaian Otomatis</h3>
-                    <p class="text-sm text-white/80">Hasil langsung setelah ujian selesai</p>
-                </div>
-                <div class="bg-white/20 backdrop-blur-sm rounded-xl p-6 text-white">
-                    <div class="text-4xl mb-3">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="text-lg font-bold mb-2">Aman & Terpercaya</h3>
-                    <p class="text-sm text-white/80">Data Anda dijamin keamanannya</p>
-                </div>
+            
+            <hr class="bg-white-50">
+            
+            <div class="text-center text-white-50">
+                <p class="mb-0">&copy; 2025 CPNS Exam System. All rights reserved.</p>
             </div>
         </div>
-    </div>
-</div>
-@endsection
+    </footer>
 
-<style>
-@keyframes blob {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    33% { transform: translate(30px, -50px) scale(1.1); }
-    66% { transform: translate(-20px, 20px) scale(0.9); }
-}
-
-.animate-blob {
-    animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-    animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-    animation-delay: 4s;
-}
-</style>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+    </script>
+    @stack('scripts')
+</body>
+</html>
