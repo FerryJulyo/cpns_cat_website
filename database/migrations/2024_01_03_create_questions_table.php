@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('option_c');
             $table->text('option_d');
             $table->text('option_e');
-            $table->enum('correct_answer', ['A', 'B', 'C', 'D', 'E']);
+            $table->enum('correct_answer', ['A', 'B', 'C', 'D', 'E','a','b','c','d','e']);
             $table->integer('point')->default(5);
             $table->timestamps();
         });
