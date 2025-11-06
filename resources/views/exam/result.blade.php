@@ -3,173 +3,240 @@
 @section('title', 'Hasil Ujian - ' . $session->exam->title)
 
 @section('content')
-    <div class="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 py-12">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Result Header -->
-            <div class="text-center mb-8 animate-fadeIn">
-                <div class="inline-block mb-6">
-                    @if ($isPassed)
-                        <div
-                            class="w-32 h-32 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-slow">
-                            <i class="fas fa-check-circle text-white text-6xl"></i>
-                        </div>
-                        <h1 class="text-4xl font-bold text-green-600 mb-2">Selamat!</h1>
-                        <p class="text-xl text-gray-700">Anda Lulus Ujian</p>
-                    @else
-                        <div
-                            class="w-32 h-32 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-slow">
-                            <i class="fas fa-exclamation-circle text-white text-6xl"></i>
-                        </div>
-                        <h1 class="text-4xl font-bold text-orange-600 mb-2">Tetap Semangat!</h1>
-                        <p class="text-xl text-gray-700">Jangan Menyerah, Coba Lagi</p>
-                    @endif
-                </div>
+<div class="min-vh-100 bg-light py-5">
+    <div class="container">
+        <!-- Result Header -->
+        <div class="text-center mb-5">
+            <div class="d-inline-block mb-4">
+                @if ($isPassed)
+                    <div class="w-100 h-100 bg-success rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 130px; height: 130px;">
+                        <i class="fas fa-check-circle text-white fa-4x"></i>
+                    </div>
+                    <h1 class="display-4 fw-bold text-success mb-2">Selamat!</h1>
+                    <p class="lead text-muted">Anda Lulus Ujian</p>
+                @else
+                    <div class="w-100 h-100 bg-warning rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 130px; height: 130px;">
+                        <i class="fas fa-exclamation-circle text-white fa-4x"></i>
+                    </div>
+                    <h1 class="display-4 fw-bold text-warning mb-2">Tetap Semangat!</h1>
+                    <p class="lead text-muted">Jangan Menyerah, Coba Lagi</p>
+                @endif
+            </div>
+        </div>
+
+        <!-- Score Card -->
+        <div class="card shadow-lg border-0 mb-5">
+            <div class="card-header bg-primary text-white py-4">
+                <h2 class="h3 mb-1">{{ $session->exam->title }}</h2>
+                <p class="mb-0 opacity-75">{{ $session->exam->type }}</p>
             </div>
 
-            <!-- Score Card -->
-            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden mb-8 animate-fadeIn">
-                <div class="bg-gradient-to-r from-purple-600 to-blue-500 px-8 py-6">
-                    <h2 class="text-2xl font-bold text-white">{{ $session->exam->title }}</h2>
-                    <p class="text-white/80">{{ $session->exam->type }}</p>
+            <div class="card-body p-4">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="text-center p-4 bg-light rounded-3 border">
+                            <div class="display-4 fw-bold text-primary mb-2">{{ $session->score }}</div>
+                            <div class="text-muted fw-medium">Total Skor Anda</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="text-center p-4 bg-light rounded-3 border">
+                            <div class="display-4 fw-bold text-info mb-2">{{ $session->exam->passing_grade }}</div>
+                            <div class="text-muted fw-medium">Passing Grade</div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="p-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div class="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl">
-                            <div class="text-6xl font-bold text-purple-600 mb-2">{{ $session->score }}</div>
-                            <div class="text-sm text-purple-800 font-medium">Total Skor Anda</div>
-                        </div>
-
-                        <div class="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl">
-                            <div class="text-6xl font-bold text-blue-600 mb-2">{{ $session->exam->passing_grade }}</div>
-                            <div class="text-sm text-blue-800 font-medium">Passing Grade</div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="bg-success bg-opacity-10 border border-success rounded-3 p-4 text-center">
+                            <i class="fas fa-check-circle text-success fa-2x mb-3"></i>
+                            <div class="h2 fw-bold text-success mb-1">{{ $session->correct_answers }}</div>
+                            <div class="text-success">Jawaban Benar</div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                        <div class="bg-green-50 border-2 border-green-200 rounded-xl p-6 text-center">
-                            <i class="fas fa-check-circle text-green-600 text-3xl mb-3"></i>
-                            <div class="text-3xl font-bold text-green-600 mb-1">{{ $session->correct_answers }}</div>
-                            <div class="text-sm text-green-800">Jawaban Benar</div>
-                        </div>
-
-                        <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6 text-center">
-                            <i class="fas fa-times-circle text-red-600 text-3xl mb-3"></i>
-                            <div class="text-3xl font-bold text-red-600 mb-1">{{ $session->wrong_answers }}</div>
-                            <div class="text-sm text-red-800">Jawaban Salah</div>
-                        </div>
-
-                        <div class="bg-gray-50 border-2 border-gray-200 rounded-xl p-6 text-center">
-                            <i class="fas fa-question-circle text-gray-600 text-3xl mb-3"></i>
-                            <div class="text-3xl font-bold text-gray-600 mb-1">{{ $session->unanswered }}</div>
-                            <div class="text-sm text-gray-800">Tidak Dijawab</div>
+                    <div class="col-md-4">
+                        <div class="bg-danger bg-opacity-10 border border-danger rounded-3 p-4 text-center">
+                            <i class="fas fa-times-circle text-danger fa-2x mb-3"></i>
+                            <div class="h2 fw-bold text-danger mb-1">{{ $session->wrong_answers }}</div>
+                            <div class="text-danger">Jawaban Salah</div>
                         </div>
                     </div>
 
-                    <!-- Performance Percentage -->
-                    <div class="mb-8">
-                        <div class="flex justify-between text-sm text-gray-600 mb-2">
-                            <span>Persentase Kebenaran</span>
-                            <span
-                                class="font-bold">{{ $session->exam->total_questions > 0 ? round(($session->correct_answers / $session->exam->total_questions) * 100, 1) : 0 }}%</span>
+                    <div class="col-md-4">
+                        <div class="bg-secondary bg-opacity-10 border border-secondary rounded-3 p-4 text-center">
+                            <i class="fas fa-question-circle text-secondary fa-2x mb-3"></i>
+                            <div class="h2 fw-bold text-secondary mb-1">{{ $session->unanswered }}</div>
+                            <div class="text-secondary">Tidak Dijawab</div>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-4">
-                            <div class="bg-gradient-to-r from-green-500 to-green-600 h-4 rounded-full transition-all duration-1000"
-                                style="width: {{ $session->exam->total_questions > 0 ? ($session->correct_answers / $session->exam->total_questions) * 100 : 0 }}%">
+                    </div>
+                </div>
+
+                <!-- Performance Percentage -->
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between text-sm text-muted mb-2">
+                        <span>Persentase Kebenaran</span>
+                        <span class="fw-bold">
+                            {{ $session->exam->total_questions > 0 ? round(($session->correct_answers / $session->exam->total_questions) * 100, 1) : 0 }}%
+                        </span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" 
+                             role="progressbar" 
+                             style="width: {{ $session->exam->total_questions > 0 ? ($session->correct_answers / $session->exam->total_questions) * 100 : 0 }}%"
+                             aria-valuenow="{{ $session->exam->total_questions > 0 ? ($session->correct_answers / $session->exam->total_questions) * 100 : 0 }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Time Info -->
+                <div class="bg-info bg-opacity-10 rounded-3 p-4 mb-4">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-calendar-check text-info fa-lg me-3"></i>
+                                <div>
+                                    <div class="text-muted small">Tanggal Ujian</div>
+                                    <div class="fw-semibold text-dark">{{ $session->start_time->format('d F Y') }}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Time Info -->
-                    <div class="bg-blue-50 rounded-xl p-6 mb-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                            <div class="flex items-center">
-                                <i class="fas fa-calendar-check text-blue-600 text-xl mr-3"></i>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-clock text-info fa-lg me-3"></i>
                                 <div>
-                                    <div class="text-gray-600">Tanggal Ujian</div>
-                                    <div class="font-semibold text-gray-900">{{ $session->start_time->format('d F Y') }}
+                                    <div class="text-muted small">Waktu Pengerjaan</div>
+                                    <div class="fw-semibold text-dark">
+                                        {{ $session->start_time->format('H:i') }} - {{ $session->end_time->format('H:i') }}
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex items-center">
-                                <i class="fas fa-clock text-blue-600 text-xl mr-3"></i>
-                                <div>
-                                    <div class="text-gray-600">Waktu Pengerjaan</div>
-                                    <div class="font-semibold text-gray-900">
-                                        {{ $session->start_time->format('H:i') }} -
-                                        {{ $session->end_time->format('H:i') }}
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="{{ route('dashboard') }}"
-                            class="flex-1 btn-primary text-center py-4 rounded-xl text-white font-semibold">
-                            <i class="fas fa-home mr-2"></i>Kembali ke Dashboard
-                        </a>
-                        <button onclick="window.print()"
-                            class="flex-1 bg-white border-2 border-purple-600 text-purple-600 py-4 rounded-xl font-semibold hover:bg-purple-50 transition">
-                            <i class="fas fa-print mr-2"></i>Cetak Hasil
-                        </button>
-                    </div>
+                <div class="d-flex flex-column flex-md-row gap-3">
+                    <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg flex-fill text-white py-3">
+                        <i class="fas fa-home me-2"></i>Kembali ke Dashboard
+                    </a>
+                    <button onclick="window.print()" class="btn btn-outline-primary btn-lg flex-fill py-3">
+                        <i class="fas fa-print me-2"></i>Cetak Hasil
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Answer Review (Optional - can be toggled) -->
-            <div class="bg-white rounded-2xl shadow-xl p-8 animate-fadeIn">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6">
-                    <i class="fas fa-list-check mr-2 text-purple-600"></i>Review Jawaban
+        <!-- Answer Review -->
+        <div class="card shadow border-0">
+            <div class="card-body p-4">
+                <h3 class="h4 fw-bold text-dark mb-4">
+                    <i class="fas fa-list-check me-2 text-primary"></i>Review Jawaban
                 </h3>
 
-                <div class="space-y-4">
+                <div class="accordion" id="answerReviewAccordion">
                     @foreach ($session->answers as $index => $answer)
-                        <div @class([
-                            'border-2 rounded-xl p-6',
-                            'border-green-200 bg-green-50' => $answer->is_correct,
-                            'border-red-200 bg-red-50' => !$answer->is_correct && $answer->user_answer,
-                            'border-gray-200 bg-white' => !$answer->is_correct && !$answer->user_answer,
-                        ])>
-                            <div class="col-span-2">
-                                <div class="flex items-center space-x-3 mb-4">
-                                    <div
-                                        class="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-graduation-cap text-white text-xl"></i>
+                        <div class="accordion-item border-0 mb-3">
+                            <h2 class="accordion-header" id="heading{{ $index }}">
+                                <button class="accordion-button collapsed {{ $answer->is_correct ? 'bg-success bg-opacity-10 text-success' : ($answer->user_answer ? 'bg-danger bg-opacity-10 text-danger' : 'bg-warning bg-opacity-10 text-warning') }}" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse{{ $index }}" 
+                                        aria-expanded="false" 
+                                        aria-controls="collapse{{ $index }}">
+                                    <div class="d-flex align-items-center w-100">
+                                        <span class="badge {{ $answer->is_correct ? 'bg-success' : ($answer->user_answer ? 'bg-danger' : 'bg-warning') }} me-3">
+                                            {{ $index + 1 }}
+                                        </span>
+                                        <span class="flex-fill">Soal {{ $index + 1 }}</span>
+                                        <span class="badge {{ $answer->is_correct ? 'bg-success' : ($answer->user_answer ? 'bg-danger' : 'bg-warning') }}">
+                                            {{ $answer->is_correct ? 'Benar' : ($answer->user_answer ? 'Salah' : 'Tidak Dijawab') }}
+                                        </span>
                                     </div>
-                                    <span class="text-xl font-bold">CPNS Exam System</span>
+                                </button>
+                            </h2>
+                            <div id="collapse{{ $index }}" 
+                                 class="accordion-collapse collapse" 
+                                 aria-labelledby="heading{{ $index }}" 
+                                 data-bs-parent="#answerReviewAccordion">
+                                <div class="accordion-body">
+                                    <div class="mb-3">
+                                        <strong>Pertanyaan:</strong>
+                                        <p class="mb-2">{{ $answer->question->question_text }}</p>
+                                    </div>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="p-3 rounded {{ $answer->user_answer === $answer->question->correct_answer ? 'bg-success bg-opacity-10 border border-success' : 'bg-light border' }}">
+                                                <strong>Jawaban Anda:</strong>
+                                                <div class="mt-1">
+                                                    {{ $answer->user_answer ?: 'Tidak dijawab' }}
+                                                    @if($answer->user_answer === $answer->question->correct_answer)
+                                                        <i class="fas fa-check text-success ms-2"></i>
+                                                    @elseif($answer->user_answer)
+                                                        <i class="fas fa-times text-danger ms-2"></i>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="p-3 rounded bg-light border">
+                                                <strong>Jawaban Benar:</strong>
+                                                <div class="mt-1">
+                                                    {{ $answer->question->correct_answer }}
+                                                    <i class="fas fa-check text-success ms-2"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p class="text-gray-400 mb-4">
-                                    Platform ujian CPNS online terpercaya untuk membantu Anda meraih impian menjadi Aparatur
-                                    Sipil Negara.
-                                </p>
-                            </div>
-
-                            <div>
-                                <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
-                                <ul class="space-y-2 text-gray-400">
-                                    <li><a href="#" class="hover:text-white transition">Tentang Kami</a></li>
-                                    <li><a href="#" class="hover:text-white transition">Panduan</a></li>
-                                    <li><a href="#" class="hover:text-white transition">FAQ</a></li>
-                                </ul>
-                            </div>
-
-                            <div>
-                                <h3 class="text-lg font-semibold mb-4">Kontak</h3>
-                                <ul class="space-y-2 text-gray-400">
-                                    <li><i class="fas fa-envelope mr-2"></i>info@cpnsexam.id</li>
-                                    <li><i class="fas fa-phone mr-2"></i>+62 821 xxxx xxxx</li>
-                                </ul>
                             </div>
                         </div>
-
-                        <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                            <p>&copy; 2025 CPNS Exam System. All rights reserved.</p>
-                        </div>
+                    @endforeach
                 </div>
-                </footer>
+            </div>
+        </div>
+    </div>
+</div>
 
-                @stack('scripts')
-                </body>
-
-                </html>
+<style>
+    .min-vh-100 {
+        min-height: 100vh;
+    }
+    
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+    
+    .card {
+        border-radius: 1rem;
+    }
+    
+    .progress {
+        border-radius: 10px;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        box-shadow: none;
+    }
+    
+    @media print {
+        .btn {
+            display: none !important;
+        }
+        
+        .bg-light {
+            background-color: white !important;
+        }
+        
+        .card {
+            box-shadow: none !important;
+            border: 1px solid #dee2e6 !important;
+        }
+    }
+</style>
+@endsection
