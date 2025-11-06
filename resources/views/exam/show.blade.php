@@ -3,122 +3,115 @@
 @section('title', $exam->title . ' - Sistem Ujian CPNS')
 
 @section('content')
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="mb-6">
-        <a href="{{ route('dashboard') }}" class="text-purple-600 hover:text-purple-700 font-medium inline-flex items-center transition">
-            <i class="fas fa-arrow-left mr-2"></i>Kembali ke Dashboard
-        </a>
-    </div>
-
-    <div class="bg-white rounded-2xl shadow-xl overflow-hidden animate-fadeIn">
-        <div class="h-48 bg-gradient-to-r {{ $exam->type == 'TWK' ? 'from-blue-500 to-blue-600' : ($exam->type == 'TIU' ? 'from-green-500 to-green-600' : 'from-purple-500 to-purple-600') }} flex items-center justify-center">
-            <div class="text-center text-white">
-                <i class="fas fa-graduation-cap text-7xl mb-4 animate-pulse-slow"></i>
-                <h1 class="text-4xl font-bold">{{ $exam->title }}</h1>
-                <span class="inline-block mt-3 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-semibold">
-                    {{ $exam->type }}
-                </span>
-            </div>
+<div class="py-5">
+    <div class="container">
+        <div class="mb-4" data-aos="fade-right">
+            <a href="{{ route('dashboard') }}" class="btn btn-outline-light rounded-pill">
+                <i class="fas fa-arrow-left me-2"></i>Kembali ke Dashboard
+            </a>
         </div>
 
-        <div class="p-8">
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Deskripsi Ujian</h2>
-                <p class="text-gray-600 leading-relaxed">{{ $exam->description }}</p>
+        <div class="glass-card overflow-hidden animate__animated animate__zoomIn">
+            <div class="text-white text-center py-5" style="background: linear-gradient(135deg, {{ $exam->type == 'TWK' ? '#3b82f6, #2563eb' : ($exam->type == 'TIU' ? '#10b981, #059669' : '#a855f7, #9333ea') }});">
+                <div class="mb-4 floating">
+                    <i class="fas fa-graduation-cap" style="font-size: 5rem;"></i>
+                </div>
+                <h1 class="display-5 fw-bold mb-3">{{ $exam->title }}</h1>
+                <span class="badge bg-white bg-opacity-25 px-4 py-2 fs-6">{{ $exam->type }}</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6">
-                    <div class="flex items-center mb-3">
-                        <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-clock text-white text-xl"></i>
+            <div class="p-5">
+                <div class="mb-5" data-aos="fade-up">
+                    <h3 class="fw-bold mb-3">Deskripsi Ujian</h3>
+                    <p class="text-muted lead">{{ $exam->description }}</p>
+                </div>
+
+                <div class="row g-4 mb-5">
+                    <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="p-4 rounded-4 h-100" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe);">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 60px; height: 60px; background: #3b82f6;">
+                                    <i class="fas fa-clock text-white fs-3"></i>
+                                </div>
+                                <div>
+                                    <small class="text-primary fw-semibold">Durasi</small>
+                                    <h3 class="fw-bold text-primary mb-0">{{ $exam->duration_minutes }} Menit</h3>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="text-sm text-blue-600 font-medium">Durasi</div>
-                            <div class="text-2xl font-bold text-blue-900">{{ $exam->duration_minutes }} Menit</div>
+                    </div>
+
+                    <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="p-4 rounded-4 h-100" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0);">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 60px; height: 60px; background: #10b981;">
+                                    <i class="fas fa-question-circle text-white fs-3"></i>
+                                </div>
+                                <div>
+                                    <small class="text-success fw-semibold">Jumlah Soal</small>
+                                    <h3 class="fw-bold text-success mb-0">{{ $exam->total_questions }} Soal</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" data-aos="fade-up" data-aos-delay="300">
+                        <div class="p-4 rounded-4 h-100" style="background: linear-gradient(135deg, #e9d5ff, #d8b4fe);">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 60px; height: 60px; background: #a855f7;">
+                                    <i class="fas fa-chart-line text-white fs-3"></i>
+                                </div>
+                                <div>
+                                    <small class="text-purple fw-semibold">Passing Grade</small>
+                                    <h3 class="fw-bold mb-0" style="color: #a855f7;">{{ $exam->passing_grade }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" data-aos="fade-up" data-aos-delay="400">
+                        <div class="p-4 rounded-4 h-100" style="background: linear-gradient(135deg, #fed7aa, #fdba74);">
+                            <div class="d-flex align-items-center">
+                                <div class="me-3 d-flex align-items-center justify-content-center rounded-3" style="width: 60px; height: 60px; background: #f97316;">
+                                    <i class="fas fa-star text-white fs-3"></i>
+                                </div>
+                                <div>
+                                    <small class="text-warning fw-semibold">Poin Per Soal</small>
+                                    <h3 class="fw-bold text-warning mb-0">5 Poin</h3>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6">
-                    <div class="flex items-center mb-3">
-                        <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-question-circle text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm text-green-600 font-medium">Jumlah Soal</div>
-                            <div class="text-2xl font-bold text-green-900">{{ $exam->total_questions }} Soal</div>
-                        </div>
-                    </div>
+                <div class="alert border-0 mb-5" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b !important;" data-aos="fade-up">
+                    <h5 class="fw-bold mb-3" style="color: #92400e;">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Perhatian!
+                    </h5>
+                    <ul class="mb-0" style="color: #92400e;">
+                        <li class="mb-2">✅ Pastikan koneksi internet Anda stabil</li>
+                        <li class="mb-2">✅ Ujian akan dimulai segera setelah Anda klik tombol "Mulai Ujian"</li>
+                        <li class="mb-2">✅ Timer akan berjalan otomatis dan tidak dapat dihentikan</li>
+                        <li class="mb-2">✅ Ujian akan berakhir otomatis jika waktu habis</li>
+                        <li>✅ Jawaban akan tersimpan otomatis setiap kali Anda memilih jawaban</li>
+                    </ul>
                 </div>
 
-                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6">
-                    <div class="flex items-center mb-3">
-                        <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-chart-line text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm text-purple-600 font-medium">Passing Grade</div>
-                            <div class="text-2xl font-bold text-purple-900">{{ $exam->passing_grade }}</div>
-                        </div>
+                <form method="POST" action="{{ route('exam.start', $exam->id) }}" id="startExamForm" data-aos="fade-up">
+                    @csrf
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="agree" required style="width: 20px; height: 20px;">
+                        <label class="form-check-label ms-2" for="agree">
+                            Saya telah membaca dan memahami semua instruksi ujian
+                        </label>
                     </div>
-                </div>
 
-                <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-6">
-                    <div class="flex items-center mb-3">
-                        <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-star text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm text-orange-600 font-medium">Poin Per Soal</div>
-                            <div class="text-2xl font-bold text-orange-900">5 Poin</div>
-                        </div>
-                    </div>
-                </div>
+                    <button type="submit" class="btn btn-gradient w-100 py-4 fs-5">
+                        <i class="fas fa-play-circle me-2"></i>
+                        Mulai Ujian Sekarang
+                    </button>
+                </form>
             </div>
-
-            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded-lg mb-8">
-                <h3 class="text-lg font-bold text-yellow-900 mb-3">
-                    <i class="fas fa-exclamation-triangle mr-2"></i>Perhatian!
-                </h3>
-                <ul class="space-y-2 text-sm text-yellow-800">
-                    <li class="flex items-start">
-                        <i class="fas fa-check-circle mt-1 mr-2 text-yellow-600"></i>
-                        <span>Pastikan koneksi internet Anda stabil</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check-circle mt-1 mr-2 text-yellow-600"></i>
-                        <span>Ujian akan dimulai segera setelah Anda klik tombol "Mulai Ujian"</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check-circle mt-1 mr-2 text-yellow-600"></i>
-                        <span>Timer akan berjalan otomatis dan tidak dapat dihentikan</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check-circle mt-1 mr-2 text-yellow-600"></i>
-                        <span>Ujian akan berakhir otomatis jika waktu habis</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check-circle mt-1 mr-2 text-yellow-600"></i>
-                        <span>Jawaban akan tersimpan otomatis setiap kali Anda memilih jawaban</span>
-                    </li>
-                </ul>
-            </div>
-
-            <form method="POST" action="{{ route('exam.start', $exam->id) }}" id="startExamForm">
-                @csrf
-                <div class="flex items-center mb-6">
-                    <input type="checkbox" id="agree" required class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
-                    <label for="agree" class="ml-3 text-sm text-gray-700">
-                        Saya telah membaca dan memahami semua instruksi ujian
-                    </label>
-                </div>
-
-                <button type="submit" class="btn-primary w-full py-4 px-6 rounded-xl text-white font-bold text-lg">
-                    <i class="fas fa-play-circle mr-2"></i>
-                    Mulai Ujian Sekarang
-                </button>
-            </form>
         </div>
     </div>
 </div>
