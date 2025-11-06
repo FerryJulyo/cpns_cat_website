@@ -2,104 +2,106 @@ name: Deploy Laravel to GitHub Pages
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
       
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'
-        extensions: sqlite, pdo_sqlite
+        php-version: '8.3'
+        extensions: sqlite, pdo_sqlite, mbstring, xml, ctype, iconv, tokenizer, json
         coverage: none
         
-    - name: Setup Node.js
+    - name: Setup Node.js 20  # 🔥 UPGRADE KE NODE 20
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'  # 🔥 GANTI DARI 18 KE 20
         cache: 'npm'
         
-    - name: Copy .env
+    - name: Clean NPM cache and reinstall
+      run: |
+        # Hapus node_modules dan package-lock.json untuk menghindari bug npm
+        rm -rf node_modules
+        rm -f package-lock.json
+        npm cache clean --force
+        
+    - name: Install NPM dependencies fresh
+      run: npm ci --no-audit --prefer-offline
+        
+    - name: Setup SQLite Database
+      run: |
+        mkdir -p database
+        touch database/cpns_exam.sqlite
+        echo "SQLite database created"
+        
+    - name: Copy Environment File
       run: |
         cp .env.example .env
         echo "APP_ENV=production" >> .env
         echo "APP_DEBUG=false" >> .env
         echo "DB_CONNECTION=sqlite" >> .env
         
-    - name: Create SQLite database
-      run: |
-        mkdir -p database
-        touch database/cpns_exam.sqlite
-        chmod 755 database/cpns_exam.sqlite
+    - name: Install Composer Dependencies
+      run: composer install --no-dev --optimize-autoloader --no-interaction
         
-    - name: Install Composer dependencies
-      run: |
-        composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
-        
-    - name: Install NPM dependencies
-      run: npm ci
-      
-    - name: Build assets
-      run: npm run build
-      
-    - name: Generate application key
+    - name: Generate App Key
       run: php artisan key:generate
       
-    - name: Run migrations
+    - name: Build Frontend Assets
+      run: |
+        # Cek Node.js version
+        node --version
+        npm --version
+        # Build dengan force
+        npm run build || npm run dev
+      
+    - name: Run Database Migrations
+      run: php artisan migrate --force
+      
+    - name: Cache Config
       run: |
         php artisan config:cache
         php artisan route:cache
         php artisan view:cache
-        php artisan migrate --force
         
-    - name: Build for static deployment
+    - name: Create Static Deployment Structure
       run: |
-        # Create dist folder
+        # Buat folder untuk static assets
         mkdir -p public/dist
+        # Copy semua assets ke folder dist
+        cp -r public/* public/dist/ 2>/dev/null || true
         
-        # Copy all public assets to dist folder
-        cp -r public/* public/dist/ || true
-        
-        # Create redirect files
+        # Buat simple index.html untuk redirect
         echo '<!DOCTYPE html>
         <html>
         <head>
-            <title>Redirecting...</title>
+            <title>CPNS CAT System</title>
+            <meta http-equiv="refresh" content="0; url=/dist/index.php">
             <script>
-                sessionStorage.redirect = location.href;
+                window.location.href = "/dist/index.php";
             </script>
-            <meta http-equiv="refresh" content="0;URL='"'"'/dist/'"'"'">
         </head>
         <body>
+            <p>Redirecting to <a href="/dist/index.php">CPNS CAT System</a></p>
         </body>
         </html>' > public/index.html
         
-        echo '<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Redirecting...</title>
-            <script>
-                const redirect = sessionStorage.redirect;
-                delete sessionStorage.redirect;
-                if (redirect && redirect != location.href) {
-                    history.replaceState(null, null, redirect);
-                }
-            </script>
-            <meta http-equiv="refresh" content="0;URL='"'"'/dist/'"'"'">
-        </head>
-        <body>
-        </body>
-        </html>' > public/404.html
-        
-    - name: Setup GitHub Pages
+    - name: Setup Pages
       uses: actions/configure-pages@v4
       
     - name: Upload artifact
@@ -110,4 +112,3 @@ jobs:
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
-      if: github.ref == 'refs/heads/main'
