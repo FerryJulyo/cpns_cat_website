@@ -9,16 +9,16 @@
         <div class="glass-card p-4 mb-4 gradient-bg animate__animated animate__fadeInDown">
             <div class="row align-items-center">
                 <div class="col-lg-9">
-                    <h1 class="text-white fw-bold mb-2">
+                    <h1 class="text-black fw-bold mb-2">
                         Selamat Datang, {{ auth()->user()->name }}! 👋
                     </h1>
-                    <p class="text-white mb-0 opacity-75">
+                    <p class="text-black mb-0 opacity-75">
                         Siap untuk mengikuti ujian hari ini? Pilih ujian yang ingin Anda ikuti di bawah ini.
                     </p>
                 </div>
                 <div class="col-lg-3 text-center d-none d-lg-block">
                     <div class="floating">
-                        <i class="fas fa-user-graduate text-white" style="font-size: 5rem; opacity: 0.3;"></i>
+                        <i class="fas fa-user-graduate text-black" style="font-size: 5rem; opacity: 0.3;"></i>
                     </div>
                 </div>
             </div>
