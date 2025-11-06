@@ -2,133 +2,310 @@
 
 @section('title', 'Ujian Berlangsung - ' . $session->exam->title)
 
+@push('styles')
+<style>
+    body {
+        background: #f8f9fa !important;
+    }
+    
+    /* Tambahkan definisi glass-card untuk background solid */
+    .glass-card {
+        background: white !important;
+        border-radius: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .timer-box {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        border-radius: 15px;
+        padding: 15px 25px;
+        box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3);
+        animation: timerPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes timerPulse {
+        0%, 100% { box-shadow: 0 10px 30px rgba(239, 68, 68, 0.3); }
+        50% { box-shadow: 0 10px 40px rgba(239, 68, 68, 0.5); }
+    }
+    
+    .question-nav-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 700;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .question-nav-btn:hover {
+        transform: scale(1.1);
+    }
+    
+    .question-nav-btn.answered {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+    
+    .question-nav-btn.current {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        animation: currentPulse 1.5s ease-in-out infinite;
+    }
+    
+    .question-nav-btn.unanswered {
+        background: #e5e7eb;
+        color: #6b7280;
+    }
+    
+    @keyframes currentPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    .option-card {
+        border: 3px solid #e5e7eb;
+        border-radius: 15px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .option-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+        transition: left 0.5s;
+    }
+    
+    .option-card:hover::before {
+        left: 100%;
+    }
+    
+    .option-card:hover {
+        border-color: #667eea;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+        transform: translateX(10px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+    }
+    
+    .option-card.selected {
+        border-color: #667eea;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .option-card.selected .option-badge {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+    
+    .option-badge {
+        background: #e5e7eb;
+        color: #6b7280;
+        transition: all 0.3s ease;
+    }
+    
+    .option-card:hover .option-badge {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+    
+    .question-text {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: #1f2937;
+        font-weight: 500;
+    }
+    
+    .question-container {
+        animation: fadeInUp 0.5s ease;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+@endpush
+
 @section('content')
-<div class="min-h-screen bg-gray-50 py-4">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header with Timer -->
-        <div class="bg-white rounded-xl shadow-lg p-4 mb-6 sticky top-20 z-40 animate-fadeIn">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-xl font-bold text-gray-900">{{ $session->exam->title }}</h1>
-                    <p class="text-sm text-gray-600">{{ $session->exam->type }} - {{ $session->exam->total_questions }} Soal</p>
+<div class="py-4" style="background: #f8f9fa; min-height: 100vh;">
+    <div class="container-fluid px-3 px-lg-5">
+        <!-- Header with Timer - Z-INDEX TERTINGGI -->
+        <div class="glass-card p-4 mb-4 sticky-top animate__animated animate__fadeInDown" style="top: 80px; z-index: 1020; background: white;">
+            <div class="row align-items-center g-3">
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <h5 class="fw-bold mb-1">{{ $session->exam->title }}</h5>
+                    <small class="text-muted">{{ $session->exam->type }} - {{ $session->exam->total_questions }} Soal</small>
                 </div>
                 
-                <div class="flex items-center space-x-4">
-                    <div class="text-center">
-                        <div class="text-sm text-gray-600">Waktu Tersisa</div>
-                        <div id="timer" class="text-3xl font-bold text-red-600">
-                            <i class="fas fa-clock mr-2"></i>
-                            <span id="timer-display">00:00</span>
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-md-end justify-content-center">
+                        <div class="timer-box text-center">
+                            <small class="text-white d-block opacity-75 mb-1">Waktu Tersisa</small>
+                            <h3 class="text-white fw-bold mb-0" id="timer-display">00:00</h3>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Progress Bar -->
-            <div class="mt-4">
-                <div class="flex justify-between text-sm text-gray-600 mb-2">
-                    <span>Progress: <span id="answered-count">0</span> / {{ $session->exam->total_questions }}</span>
-                    <span id="progress-percentage">0%</span>
+            <div class="mt-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <small class="fw-semibold text-muted">Progress: <span id="answered-count" class="text-dark">0</span> / {{ $session->exam->total_questions }}</small>
+                    <small class="fw-semibold text-primary" id="progress-percentage">0%</small>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-3">
-                    <div id="progress-bar" class="bg-gradient-to-r from-purple-600 to-blue-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                <div class="progress" style="height: 8px; border-radius: 10px; background-color: #e5e7eb;">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 10px; transition: width 0.3s ease;"></div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Question Navigation -->
-            <div class="lg:col-span-1">
-                <div class="bg-white rounded-xl shadow-lg p-6 sticky top-48">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">
-                        <i class="fas fa-list mr-2 text-purple-600"></i>Navigasi Soal
-                    </h3>
-                    <div class="grid grid-cols-5 gap-2">
+        <div class="row g-4">
+            <!-- Question Navigation Sidebar - Z-INDEX MENENGAH -->
+            <div class="col-lg-3 col-xl-2">
+                <div class="glass-card p-4 sticky-top" style="top: 260px; z-index: 100; background: white;" data-aos="fade-right">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-list me-2 text-primary"></i>Navigasi Soal
+                    </h6>
+                    
+                    <!-- Gunakan Bootstrap Grid untuk Layout Rapi -->
+                    <div class="row g-2">
                         @foreach($session->exam->questions as $index => $question)
-                        <button 
-                            onclick="showQuestion({{ $index }})" 
-                            class="question-nav w-10 h-10 rounded-lg font-semibold transition-all hover:scale-110"
-                            data-question="{{ $index }}"
-                            data-question-id="{{ $question->id }}">
-                            {{ $index + 1 }}
-                        </button>
+                        <div class="col-auto">
+                            <button 
+                                onclick="showQuestion({{ $index }})" 
+                                class="question-nav-btn question-nav unanswered"
+                                data-question="{{ $index }}"
+                                data-question-id="{{ $question->id }}">
+                                {{ $index + 1 }}
+                            </button>
+                        </div>
                         @endforeach
                     </div>
                     
-                    <div class="mt-6 space-y-2 text-sm">
-                        <div class="flex items-center">
-                            <div class="w-6 h-6 bg-green-500 rounded mr-2"></div>
-                            <span class="text-gray-600">Terjawab</span>
+                    <hr class="my-4">
+                    
+                    <div class="small">
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 25px; height: 25px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 5px;"></div>
+                            <small class="ms-2">Terjawab</small>
                         </div>
-                        <div class="flex items-center">
-                            <div class="w-6 h-6 bg-yellow-500 rounded mr-2"></div>
-                            <span class="text-gray-600">Sedang Dijawab</span>
+                        <div class="d-flex align-items-center mb-2">
+                            <div style="width: 25px; height: 25px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 5px;"></div>
+                            <small class="ms-2">Sedang Dijawab</small>
                         </div>
-                        <div class="flex items-center">
-                            <div class="w-6 h-6 bg-gray-300 rounded mr-2"></div>
-                            <span class="text-gray-600">Belum Dijawab</span>
+                        <div class="d-flex align-items-center">
+                            <div style="width: 25px; height: 25px; background: #e5e7eb; border-radius: 5px;"></div>
+                            <small class="ms-2">Belum Dijawab</small>
                         </div>
                     </div>
 
-                    <button onclick="submitExam()" class="btn-primary w-full mt-6 py-3 rounded-lg text-white font-semibold">
-                        <i class="fas fa-check-circle mr-2"></i>
+                    <button onclick="submitExam()" class="btn btn-danger w-100 mt-4 py-3 rounded-pill fw-bold">
+                        <i class="fas fa-check-circle me-2"></i>
                         Selesai & Submit
                     </button>
                 </div>
             </div>
 
-            <!-- Question Display -->
-            <div class="lg:col-span-3">
-                <div class="bg-white rounded-xl shadow-lg p-8 animate-fadeIn">
-                    @foreach($session->exam->questions as $index => $question)
-                    <div class="question-container {{ $index == 0 ? '' : 'hidden' }}" data-question="{{ $index }}" data-question-id="{{ $question->id }}">
-                        <div class="mb-6">
-                            <div class="flex items-start justify-between mb-4">
-                                <span class="inline-block bg-purple-100 text-purple-800 px-4 py-2 rounded-lg font-semibold">
-                                    Soal No. {{ $index + 1 }}
-                                </span>
-                                <span class="text-sm text-gray-500">Poin: {{ $question->point }}</span>
-                            </div>
-                            
-                            <div class="prose max-w-none">
-                                <p class="text-lg text-gray-800 leading-relaxed whitespace-pre-line">{{ $question->question_text }}</p>
-                            </div>
+            <!-- Question Display - Z-INDEX RENDAH -->
+            <div class="col-lg-9 col-xl-10" style="position: relative; z-index: 50;">
+                @foreach($session->exam->questions as $index => $question)
+                <div class="glass-card p-4 p-lg-5 question-container {{ $index == 0 ? '' : 'd-none' }}" 
+                     data-question="{{ $index }}" 
+                     data-question-id="{{ $question->id }}"
+                     id="question-{{ $index }}"
+                     style="position: relative; z-index: 10; background: white;">
+                    
+                    <!-- Question Header -->
+                    <div class="row mb-4">
+                        <div class="col">
+                            <span class="badge badge-custom fs-6 px-4 py-2" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                                <i class="fas fa-file-alt me-2"></i>Soal No. {{ $index + 1 }}
+                            </span>
                         </div>
+                        <div class="col-auto">
+                            <span class="badge bg-light text-dark border px-3 py-2">
+                                <i class="fas fa-star text-warning me-1"></i>Poin: {{ $question->point }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Question Text -->
+                    <div class="mb-5">
+                        <div class="p-4 rounded-3" style="background: linear-gradient(135deg, #f3f4f6, #e5e7eb);">
+                            <p class="question-text mb-0">{{ $question->question_text }}</p>
+                        </div>
+                    </div>
 
-                        <div class="space-y-3">
+                    <!-- Options -->
+                    <div class="mb-5">
+                        <h6 class="fw-bold mb-3 text-muted">
+                            <i class="fas fa-tasks me-2"></i>Pilih Jawaban:
+                        </h6>
+                        <div class="d-grid gap-3">
                             @foreach(['A', 'B', 'C', 'D', 'E'] as $option)
-                            <label class="option-label flex items-start p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-purple-500 hover:bg-purple-50 transition-all">
+                            <label class="option-card" id="option-{{ $index }}-{{ $option }}">
                                 <input 
                                     type="radio" 
                                     name="question_{{ $question->id }}" 
                                     value="{{ $option }}"
-                                    class="mt-1 mr-4 w-5 h-5 text-purple-600 focus:ring-purple-500"
+                                    class="d-none"
                                     onchange="saveAnswer({{ $question->id }}, '{{ $option }}', {{ $index }})"
                                     {{ optional($session->answers->where('question_id', $question->id)->first())->user_answer == $option ? 'checked' : '' }}>
-                                <div class="flex-1">
-                                    <span class="font-semibold text-purple-600 mr-3">{{ $option }}.</span>
-                                    <span class="text-gray-800">{{ $question->{'option_' . strtolower($option)} }}</span>
+                                <div class="d-flex align-items-start">
+                                    <span class="badge option-badge me-3 flex-shrink-0" style="font-size: 1rem; padding: 10px 15px; min-width: 45px;">
+                                        {{ $option }}
+                                    </span>
+                                    <span class="flex-grow-1 option-text" style="font-size: 1rem; line-height: 1.6;">
+                                        {{ $question->{'option_' . strtolower($option)} }}
+                                    </span>
+                                    <i class="fas fa-check-circle text-success ms-2 d-none check-icon" style="font-size: 1.5rem;"></i>
                                 </div>
                             </label>
                             @endforeach
                         </div>
-
-                        <div class="flex justify-between mt-8">
-                            <button 
-                                onclick="previousQuestion()" 
-                                class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition {{ $index == 0 ? 'invisible' : '' }}">
-                                <i class="fas fa-chevron-left mr-2"></i>Sebelumnya
-                            </button>
-                            
-                            <button 
-                                onclick="nextQuestion()" 
-                                class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:shadow-lg transition {{ $index == count($session->exam->questions) - 1 ? 'hidden' : '' }}">
-                                Selanjutnya<i class="fas fa-chevron-right ml-2"></i>
-                            </button>
-                        </div>
                     </div>
-                    @endforeach
+
+                    <!-- Navigation Buttons -->
+                    <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                        <button 
+                            onclick="previousQuestion()" 
+                            class="btn btn-outline-secondary btn-lg rounded-pill px-4 {{ $index == 0 ? 'invisible' : '' }}"
+                            style="min-width: 150px;">
+                            <i class="fas fa-chevron-left me-2"></i>Sebelumnya
+                        </button>
+                        
+                        <div class="text-center d-none d-md-block">
+                            <small class="text-muted">Soal <strong class="text-primary">{{ $index + 1 }}</strong> dari <strong>{{ $session->exam->total_questions }}</strong></small>
+                        </div>
+                        
+                        <button 
+                            onclick="nextQuestion()" 
+                            class="btn btn-gradient btn-lg rounded-pill px-4 {{ $index == count($session->exam->questions) - 1 ? 'invisible' : '' }}"
+                            style="min-width: 150px;">
+                            Selanjutnya<i class="fas fa-chevron-right ms-2"></i>
+                        </button>
+                    </div>
                 </div>
+                @endforeach
             </div>
         </div>
     </div>
@@ -153,6 +330,13 @@ document.addEventListener('DOMContentLoaded', function() {
     startTimer();
     updateProgress();
     updateNavigationButtons();
+    
+    // Mark already answered questions
+    document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+        const card = radio.closest('.option-card');
+        card.classList.add('selected');
+        card.querySelector('.check-icon').classList.remove('d-none');
+    });
 });
 
 function startTimer() {
@@ -167,27 +351,35 @@ function startTimer() {
             alert('Waktu habis! Ujian akan diselesaikan otomatis.');
             submitExam();
         } else if (remainingSeconds <= 300) {
-            document.getElementById('timer-display').classList.add('animate-pulse');
+            document.querySelector('.timer-box').style.animation = 'timerPulse 0.5s ease-in-out infinite';
         }
     }, 1000);
 }
 
 function updateTimerDisplay() {
-    let minutes = Math.floor(remainingSeconds / 60);
-    let seconds = remainingSeconds % 60;
+    let minutes = Math.floor(Math.max(0, remainingSeconds) / 60);
+    let seconds = Math.floor(Math.max(0, remainingSeconds) % 60);
     document.getElementById('timer-display').textContent = 
         String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
 }
 
 function showQuestion(index) {
+    // Hide all questions
     document.querySelectorAll('.question-container').forEach(container => {
-        container.classList.add('hidden');
+        container.classList.add('d-none');
+        container.classList.remove('animate__animated', 'animate__fadeIn');
     });
     
-    document.querySelector(`.question-container[data-question="${index}"]`).classList.remove('hidden');
+    // Show selected question with animation
+    const targetQuestion = document.querySelector(`.question-container[data-question="${index}"]`);
+    targetQuestion.classList.remove('d-none');
+    targetQuestion.classList.add('animate__animated', 'animate__fadeIn');
     
     currentQuestion = index;
     updateNavigationButtons();
+    
+    // Scroll to top smoothly
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function nextQuestion() {
@@ -207,14 +399,14 @@ function updateNavigationButtons() {
         let questionIndex = parseInt(btn.dataset.question);
         let questionId = parseInt(btn.dataset.questionId);
         
-        btn.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-gray-300', 'text-white', 'text-gray-700');
+        btn.classList.remove('answered', 'current', 'unanswered');
         
         if (answeredQuestions.has(questionId)) {
-            btn.classList.add('bg-green-500', 'text-white');
+            btn.classList.add('answered');
         } else if (questionIndex === currentQuestion) {
-            btn.classList.add('bg-yellow-500', 'text-white');
+            btn.classList.add('current');
         } else {
-            btn.classList.add('bg-gray-300', 'text-gray-700');
+            btn.classList.add('unanswered');
         }
     });
 }
@@ -229,6 +421,25 @@ function updateProgress() {
 }
 
 function saveAnswer(questionId, answer, questionIndex) {
+    // Update UI immediately
+    const questionContainer = document.querySelector(`.question-container[data-question="${questionIndex}"]`);
+    
+    // Remove selected class from all options
+    questionContainer.querySelectorAll('.option-card').forEach(card => {
+        card.classList.remove('selected');
+        card.querySelector('.check-icon').classList.add('d-none');
+    });
+    
+    // Add selected class to chosen option
+    const selectedCard = questionContainer.querySelector(`#option-${questionIndex}-${answer}`);
+    selectedCard.classList.add('selected');
+    selectedCard.querySelector('.check-icon').classList.remove('d-none');
+    
+    // Show success animation
+    const checkIcon = selectedCard.querySelector('.check-icon');
+    checkIcon.style.animation = 'bounce 0.5s ease';
+    
+    // Save to server
     fetch('{{ route("exam.saveAnswer", $session->id) }}', {
         method: 'POST',
         headers: {
@@ -246,28 +457,46 @@ function saveAnswer(questionId, answer, questionIndex) {
             answeredQuestions.add(questionId);
             updateProgress();
             updateNavigationButtons();
+            showNotification('✓ Jawaban tersimpan!', 'success');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan saat menyimpan jawaban. Silakan coba lagi.');
+        showNotification('✗ Gagal menyimpan jawaban', 'error');
     });
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed animate__animated animate__fadeInUp shadow-lg`;
+    notification.style.cssText = 'bottom: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+    notification.innerHTML = `<strong>${message}</strong>`;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.remove('animate__fadeInUp');
+        notification.classList.add('animate__fadeOutDown');
+        setTimeout(() => notification.remove(), 500);
+    }, 2000);
 }
 
 function submitExam() {
     let unansweredCount = totalQuestions - answeredQuestions.size;
     let confirmMessage = unansweredCount > 0 
-        ? `Anda masih memiliki ${unansweredCount} soal yang belum dijawab. Apakah Anda yakin ingin menyelesaikan ujian?`
-        : 'Apakah Anda yakin ingin menyelesaikan ujian?';
+        ? `⚠️ Anda masih memiliki ${unansweredCount} soal yang belum dijawab.\n\nApakah Anda yakin ingin menyelesaikan ujian?`
+        : '✓ Semua soal sudah dijawab!\n\nApakah Anda yakin ingin menyelesaikan ujian?';
     
     if (confirm(confirmMessage)) {
         clearInterval(timerInterval);
         
-        let form = document.createElement('form');
+        // Show loading
+        document.body.style.cursor = 'wait';
+        
+        const form = document.createElement('form');
         form.method = 'POST';
         form.action = '{{ route("exam.submit", $session->id) }}';
         
-        let csrfInput = document.createElement('input');
+        const csrfInput = document.createElement('input');
         csrfInput.type = 'hidden';
         csrfInput.name = '_token';
         csrfInput.value = '{{ csrf_token() }}';
@@ -281,19 +510,24 @@ function submitExam() {
 // Prevent page reload/close during exam
 window.addEventListener('beforeunload', function(e) {
     e.preventDefault();
-    e.returnValue = '';
+    e.returnValue = 'Ujian sedang berlangsung. Apakah Anda yakin ingin meninggalkan halaman?';
     return 'Ujian sedang berlangsung. Apakah Anda yakin ingin meninggalkan halaman?';
 });
 
 // Disable right click
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
+    return false;
 });
 
 // Disable certain keyboard shortcuts
 document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'p')) {
+    // Disable F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+U, Ctrl+S
+    if (e.key === 'F12' || 
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C')) ||
+        (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'p'))) {
         e.preventDefault();
+        return false;
     }
 });
 </script>
